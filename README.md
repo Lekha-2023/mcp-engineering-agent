@@ -1,19 +1,26 @@
 # MCP Engineering Agent
 
-An engineering-focused agent architecture demonstrating how an LLM agent can safely use typed tools through an MCP-style interface. The project emphasizes explicit schemas, authorization boundaries, audit events, and deterministic local tools.
+A security-first engineering agent demonstrating an **MCP-style JSON-RPC tool boundary**. It separates model orchestration from typed tools, authorization, and audit events.
 
 ## Architecture
 
-`User -> Agent -> Tool Registry -> Authorization -> Tool -> Audit Log`
+```text
+User -> Agent -> JSON-RPC/MCP Boundary -> Tool Registry -> Authorization -> Tool
+                                                    `-> Audit Event
+```
 
-## Tools
+## What this demonstrates
 
-- `list_files` — inspect an allowed workspace
-- `read_file` — read a bounded text file
-- `query_sql` — execute an allowlisted read-only query pattern
-- `create_ticket` — generate a structured engineering task
+- `tools/list` and `tools/call` JSON-RPC methods
+- Typed tool registration and discovery
+- Role-based authorization before tool execution
+- Read-only vs write-capable tool separation
+- UTC audit events for every authorization decision
+- Framework-light design that is easy to extend to a full MCP server
 
-The tool layer is deliberately framework-light so the security and orchestration concepts are easy to explain in an interview.
+## Why it matters
+
+Agentic systems become risky when an LLM can directly execute arbitrary actions. This project treats tools as a privileged interface with explicit schemas and authorization boundaries.
 
 ## Run
 
@@ -22,3 +29,5 @@ pip install -e '.[dev]'
 python -m app.server
 pytest -q
 ```
+
+No real credentials or external systems are required for the demo.
